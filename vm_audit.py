@@ -1,0 +1,76 @@
+import logging
+import configparser
+import yaml
+import os, glob
+from flask import Flask, url_for
+
+parser = configparser.ConfigParser()
+
+try:
+    with open('vm_audit.cfg') as f:
+        parser.readfp(f)
+except IOError:
+    raise MyError()
+
+
+log_name=(parser.get('location','log_name'))
+data_dir=(parser.get('location','data_dir'))
+
+app = Flask(__name__)
+
+logging.basicConfig(filename=log_name, level=logging.INFO)
+
+@app.route('/')
+def api_root():
+    return """
+    <p>This is a small script that does a few things. It listens for 5 things.<br/>
+    <ol type="1">
+    <li> A Hostname: the name of the local machine.
+    <li> The user: The use that is running the http post
+    <li> The Core or CPU count: How many processor(s) cores are on the machine
+    <li> The overall or Total Physical Memory Amount
+    <li> The physical drive size for the first or main disk drive
+    </ol>
+
+    Once these are passed to this web service it creates a file for each host<br/>
+    that contains that hosts information<br/>
+    
+    ex. curl http://hostname:5000/audit/hostname/user/cpu/memory/hdsize
+    """
+
+@app.route('/audit/listfiles')
+def api_listfiles():
+    data_list = os.listdir(data_dir)
+    return('<br>'.join(map(str, data_list)))
+
+@app.route('/audit/<host>/<user>/<cpu>/<memory>/<hd_size>')
+def api_project(host,user,cpu,memory,hd_size):
+
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir)
+
+    filename = ('vmaudit-'+host+'-'+user)
+    try:
+      filename
+    except NameError:
+      print("Variable filename is not defined input most likely missing!")
+      return("Variable filename is not defined input most likely missing!")
+
+    data = dict(
+        User = user,
+        Host = dict(
+            Name = host,
+            Cpu = cpu,
+            Memory = memory,
+            Disk = hd_size,
+        )
+    )
+    with open(data_dir+'/'+filename+'.yml', 'w') as outfile:
+        yaml.dump(data, outfile, default_flow_style=False)
+
+    return('Entry created for host '+host+' by user '+user)
+
+
+if __name__ == '__main__':
+    app.run(host= '0.0.0.0')
+
