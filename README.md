@@ -1,5 +1,5 @@
-# webapi-fun
-This is just a super simple example I use for a RHCSA II class for messing with curl and webapi stuff
+# vm-audit
+This is just a super simple example I use for a RHCSA II class for messing with curl and webapi stuff, it's not really meant to be used for anything meaningful except as an example application that has a web api.
 
 This is a small script that does a few things. It listens for 5 things.
 - A Hostname: the name of the local machine.
