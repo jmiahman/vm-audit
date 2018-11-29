@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name='vmaudit',
-      version='0.1',
+      version='0.0.2',
       description='Audit your vms with ease',
       long_description=readme(),
       long_description_content_type='text/markdown',
@@ -16,7 +16,8 @@ setup(name='vmaudit',
       packages=['vmaudit'],
       include_package_data=True,
       zip_safe=False,
-      data_files=[('/etc', ['vmaudit/vm-audit.cfg']),
+      data_files=[('/etc/vm-audit', ['vmaudit/vm-audit.cfg']),
                   ('/usr/bin', ['vmaudit/vm-audit']),
-                  ('/var/cache/vmaudit', [])]
+                  ('/var/cache/vm-audit', []),
+                  ('/var/log/vm-audit', [])]
       )
