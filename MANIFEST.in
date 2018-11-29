@@ -1,2 +1,2 @@
 include README.md
-include vmaudit/vm_audit.cfg
+include vmaudit/vm-audit.cfg
