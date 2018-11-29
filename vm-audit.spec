@@ -1,6 +1,10 @@
+# This rpm does a lot of the setup but python3.6 is required
+# and there is some trickery involved along with flask needing
+# to be installed via pip3
+
 Name:		vm-audit	
 Version:	0.0.2
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A python web service that creates yaml file for vm or machine info
 
 Group:		Applications/Internet
@@ -8,8 +12,8 @@ License:	MIT
 URL:		https://github.com/jmiahman/vm-audit
 Source0:	https://github.com/jmiahman/%{name}/archive/%{version}.tar.gz
 
-BuildRequires:	rh-python36-python-setuptools rh-python36
-Requires:	rh-python36 rh-python36-PyYAML
+BuildRequires:	centos-release-scl-rh rh-python36-python-setuptools rh-python36
+Requires:	centos-release-scl-rh rh-python36 rh-python36-PyYAML supervisord
  
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
 Requires(postun): /usr/sbin/userdel
@@ -32,6 +36,8 @@ Once these are passed to this web service it creates a file for each host that c
 %install
 python3 setup.py install --root=$RPM_BUILD_ROOT --install-lib=%{python_sitearch}
 
+rm -rf $RPM_BUILD_ROOT/usr/lib64/python2.7
+
 %pre
 /usr/bin/getent group vmaudit > /dev/null || /usr/sbin/groupadd -r vmaudit
 /usr/bin/getent passwd vmaudit > /dev/null || /usr/sbin/useradd -r -d /path/to/program -s /sbin/nologin -g vmaudit vmaudit
@@ -45,10 +51,14 @@ fi
 %doc README.md
 %{_bindir}/%{name}
 %attr(-, vmaudit, vmaudit)%config /etc/%{name}/%{name}.cfg
+%attr(-, vmaudit, vmaudit)%config /etc/supervisord.d/%{name}.ini
 %attr(-, vmaudit, vmaudit)%dir %{_localstatedir}/cache/%{name}
 %attr(-, vmaudit, vmaudit)%dir %{_localstatedir}/log/%{name}
 
 %changelog
+* Thu Nov 29 2018 JMiahMan <jmiahman@unity-linux.org> - 0.0.2-2
+- Add supervisord support and some notes
+
 * Thu Nov 29 2018 JMiahMan <jmiahman@unity-linux.org> - 0.0.2-1
 - Some changes
 

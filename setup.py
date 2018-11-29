@@ -17,6 +17,7 @@ setup(name='vmaudit',
       include_package_data=True,
       zip_safe=False,
       data_files=[('/etc/vm-audit', ['vmaudit/vm-audit.cfg']),
+                  ('/etc/supervisord.d', ['vm-audit.ini']),
                   ('/usr/bin', ['vmaudit/vm-audit']),
                   ('/var/cache/vm-audit', []),
                   ('/var/log/vm-audit', [])]
