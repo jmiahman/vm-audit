@@ -1,0 +1,2 @@
+include README.md
+include vmaudit/vm_audit.cfg

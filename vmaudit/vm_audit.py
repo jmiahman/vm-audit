@@ -1,7 +1,7 @@
 import logging
 import configparser
 import yaml
-import os, glob
+import os, glob, sys, pprint
 from flask import Flask, url_for
 
 parser = configparser.ConfigParser()
@@ -15,6 +15,9 @@ except IOError:
 
 log_name=(parser.get('location','log_name'))
 data_dir=(parser.get('location','data_dir'))
+
+if not os.path.exists(data_dir):
+    os.makedirs(data_dir)
 
 app = Flask(__name__)
 
@@ -41,13 +44,25 @@ def api_root():
 @app.route('/audit/listfiles')
 def api_listfiles():
     data_list = os.listdir(data_dir)
-    return('<br>'.join(map(str, data_list)))
+    if not data_list:
+        return("No files to list")
+    else:
+        return('<br>'.join(map(str, data_list)))
+
+@app.route('/audit/checkfile/<yaml_file>')
+def api_checkfile(yaml_file):
+    file_yml=(data_dir+'/'+yaml_file)
+    if not file_yml:
+        return("No file given or file not found")
+    else:
+        fp = open(file_yml, "r")
+        content = fp.read()
+        fp.close()
+        ymldata = yaml.load(content)
+        return(yaml.dump(ymldata, encoding=('utf-8')))
 
 @app.route('/audit/<host>/<user>/<cpu>/<memory>/<hd_size>')
 def api_project(host,user,cpu,memory,hd_size):
-
-    if not os.path.exists(data_dir):
-        os.makedirs(data_dir)
 
     filename = ('vmaudit-'+host+'-'+user)
     try:

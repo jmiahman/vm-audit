@@ -1,3 +1,5 @@
 #Ignore some files if we run in curr dir
 data/
 *.log
+vmaudit/data/
+vmaudit/*.log
