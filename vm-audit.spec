@@ -8,8 +8,8 @@ License:	MIT
 URL:		https://github.com/jmiahman/vm-audit
 Source0:	https://github.com/jmiahman/%{name}/archive/%{version}.tar.gz
 
-BuildRequires:	python36-setuptools python36
-Requires:	python36
+BuildRequires:	rh-python36-python-setuptools rh-python36
+Requires:	rh-python36 rh-python36-PyYAML
  
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
 Requires(postun): /usr/sbin/userdel
@@ -30,7 +30,7 @@ Once these are passed to this web service it creates a file for each host that c
 %build
 
 %install
-python36 setup.py install --prefix=/usr
+python3 setup.py install --root=$RPM_BUILD_ROOT --install-lib=%{python_sitearch}
 
 %pre
 /usr/bin/getent group vmaudit > /dev/null || /usr/sbin/groupadd -r vmaudit
@@ -44,13 +44,13 @@ fi
 %files
 %doc README.md
 %{_bindir}/%{name}
-%attr(-, vmaudit, vmaudit) %{_configdir}/%{name}.cfg
+%attr(-, vmaudit, vmaudit)%config /etc/%{name}/%{name}.cfg
 %attr(-, vmaudit, vmaudit)%dir %{_localstatedir}/cache/%{name}
 %attr(-, vmaudit, vmaudit)%dir %{_localstatedir}/log/%{name}
 
 %changelog
 * Thu Nov 29 2018 JMiahMan <jmiahman@unity-linux.org> - 0.0.2-1
-- Fix somethings
+- Some changes
 
 * Thu Nov 29 2018 JMiahMan <jmiahman@unity-linux.org> - 0.0.1-1
 - Initial build
