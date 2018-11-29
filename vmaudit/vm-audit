@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import logging
 import configparser
 import yaml
@@ -7,7 +8,7 @@ from flask import Flask, url_for
 parser = configparser.ConfigParser()
 
 try:
-    with open('vm_audit.cfg') as f:
+    with open('/etc/vm-audit.cfg') as f:
         parser.readfp(f)
 except IOError:
     raise MyError()
